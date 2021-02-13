@@ -186,7 +186,7 @@ function generate_param_labels(params, uniqueFields){
         query = query.join(', ');
         //syntax based on SemanticUI labels
         $param_labels.append(`
-        <div class="ui large yellow label">${prefix}
+        <div class="ui large label">${prefix}
             <div class="detail">${query}</div>
             <i class="delete icon" onclick="delete_param('${field}')"></i>
         </div>
