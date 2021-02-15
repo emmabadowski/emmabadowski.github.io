@@ -30,7 +30,7 @@
   sort: int
 
 - value: voices
-  label: Voices
+  label: Parts
   type: sym
   sort: string-ins
 
@@ -45,7 +45,7 @@
   sort: string-ins
 
 - value: tags
-  label: Tags
+  label: Notes
   type: text
   sort: string-ins
 
