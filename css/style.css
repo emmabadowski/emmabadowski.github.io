@@ -70,6 +70,12 @@ footer p {
 /* plus a bit more but to all elements.*/
 /* see https://github.com/Semantic-Org/Semantic-UI/issues/1114*/
 
+abbr[title]:after
+{
+    content: " (" attr(title) ")";
+    color: grey;
+}
+
 /* Mobile */
 @media only screen and (max-width: 767px) {
     [class*="mobile hidden"],
@@ -79,6 +85,9 @@ footer p {
     [class*="widescreen only"]:not(.mobile),
     [class*="or lower hidden"] {
         display: none !important;
+    }
+    abbr[title] {
+        text-decoration: none;
     }
 }
 
@@ -92,6 +101,9 @@ footer p {
     [class*="or lower hidden"]:not(.mobile) {
         display: none !important;
     }
+    abbr[title] {
+        text-decoration: none;
+    }
 }
 
 /* Computer / Desktop / iPad Landscape */
@@ -103,6 +115,10 @@ footer p {
     [class*="widescreen only"]:not(.computer),
     [class*="or lower hidden"]:not(.tablet):not(.mobile) {
         display: none !important;
+    }
+    abbr[title]:after
+    {
+        content: "";
     }
 }
 
@@ -116,6 +132,10 @@ footer p {
     [class*="or lower hidden"]:not(.computer):not(.tablet):not(.mobile) {
         display: none !important;
     }
+    abbr[title]:after
+    {
+        content: "";
+    }
 }
 
 /* Widescreen Monitor */
@@ -127,5 +147,9 @@ footer p {
     [class*="widescreen hidden"],
     [class*="widescreen or lower hidden"] {
         display: none !important;
+    }
+    abbr[title]:after
+    {
+        content: "";
     }
 }
