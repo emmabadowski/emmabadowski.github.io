@@ -84,7 +84,11 @@ layout: default
                 <thead>
                 <tr>
                     {% for field in site.data.fields %}
-                    <th>{{field.label}}</th>
+                    <th>
+                        {% if field.abbr %}<abbr title="{{field.abbr}}">{% endif %}
+                        {{field.label}}
+                        {% if field.abbr %}</abbr>{% endif %}
+                    </th>
                     {% endfor %}
                 </tr>
                 </thead>

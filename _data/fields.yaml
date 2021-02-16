@@ -18,6 +18,7 @@
   label: "Song #"
   type: num
   sort: float
+  abbr: "position of song in original text"
 
 - value: song_title
   label: Song Title
@@ -28,24 +29,28 @@
   label: "# of Parts"
   type: num
   sort: int
+  abbr: "total number of parts not including chord notations"
 
 - value: voices
-  label: Voices
+  label: Parts
   type: sym
   sort: string-ins
+  abbr: "list of parts in song: Soprano, Alto, Tenor, Bass, Chords/Continuo"
 
 - value: text
   label: Text
   type: sym
   sort: string-ins
+  abbr: "indicates which parts have text setting"
 
 - value: languages
   label: Languages
   type: text
   sort: string-ins
+  abbr: "language or languages of the song's text"
 
 - value: tags
-  label: Tags
+  label: Notes
   type: text
   sort: string-ins
 
