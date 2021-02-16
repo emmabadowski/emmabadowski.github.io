@@ -41,13 +41,24 @@ $(document).ready(function(){
         for (const key of params.keys() ){
             uniqueFields.add(key);
         }
-        generate_param_labels(params, uniqueFields);
+
+        //get list of valid fields from DOM
+        let validFields = new Set();
+        for (const key of window.store){
+            validFields.add(key.value);
+        }
+
+        //get set of all valid fields that are also unique params
+        const validUniqueFields = new Set(
+            [...uniqueFields].filter(x => validFields.has(x))
+        );
+
+        generate_param_labels(params, validUniqueFields);
 
         let allResults = []; //array for holding every result from all queries
         //search logic:
         // - for each unique param entry, perform a search
-        uniqueFields.forEach(function(field){
-            //CHANGE THIS replace with a function to use string matching, number matching, or index searching based on field type
+        validUniqueFields.forEach(function(field){
             //return a list of all search results.
             const results = execute_query(global.idx, field, params, loaded_data);
             results.forEach(function(result){
@@ -57,7 +68,7 @@ $(document).ready(function(){
 
         let incResults = []; //array for holding results that should be displayed;
         // if there are params
-        if (uniqueFields.size){
+        if (validUniqueFields.size){
             // - create set of only results that appear in all searches
             // - use the following function to get object containing counts of each result.ref item
             const resultFrequency = allResults.reduce(function(obj,b) {
@@ -68,7 +79,7 @@ $(document).ready(function(){
             // - compare returned counts against number of query params; only return results that appear as many times as there are params
             for (const key in resultFrequency){
                 if (!resultFrequency.hasOwnProperty(key)){continue;}
-                if (resultFrequency[key] >= uniqueFields.size){
+                if (resultFrequency[key] >= validUniqueFields.size){
                     incResults.push(key);
                 }
             }
@@ -90,15 +101,14 @@ $(document).ready(function(){
         let params = new URLSearchParams(window.location.search); //call up existing search params
         const field = $("#search_field").val();  //value of search_field
         const type = $("#search_type").val();
-        //TO DO --- Add some validation and/or auto-trimming here.
         const queries = $("#search_text").val().trim().replace(', ',' ').replace(' OR ',' ').replace(' AND ',' ').split(' '); // value of search_text, split into separate terms by spaces
         for (const query of queries){
             if (type === 'or'){
-                params.append(field,query); //build query param based on search field value
+                params.append(field,encodeURI(query)); //build query param based on search field value; encodeURI escapes any html entered in field
             } else if (type === 'and'){
-                params.append(field,'+'+query);
+                params.append(field,'+'+encodeURI(query));
             } else if (type === 'not'){
-                params.append(field,'-'+query);
+                params.append(field,'-'+encodeURI(query));
             }
         }
         window.location.search = params; //pass param to URL, triggering page reload.
@@ -164,9 +174,9 @@ function display_search_results(results, loaded_data) {
     );
 }
 
-function generate_param_labels(params, uniqueFields){
+function generate_param_labels(params, validUniqueFields){
     const $param_labels = $("#param_labels");
-    uniqueFields.forEach(function(field){
+    validUniqueFields.forEach(function(field){
         const f = window.store.find(item => item.value === field);
         const prefix = (f) ? f.label+':' : 'All Fields:';
         let query = [];
@@ -193,7 +203,7 @@ function generate_param_labels(params, uniqueFields){
         `);
     });
     //button for removing all params at once
-    if (uniqueFields.size){
+    if (validUniqueFields.size){
         $param_labels.append(`<a href='/'>Clear all</a>`);
     }
 }
@@ -240,7 +250,6 @@ function execute_query(index, field, params, data){
         return Array.from(new Set(res));
     } else if (f.type === 'sym') { //perform direct string comparisons
         const entries = Object.entries(data).map(i => ([i[0], i[1][field].toLowerCase()]));
-        console.log(entries);
         let res = [];
         params.getAll(field).forEach(function(s){
             res.push(...entries.filter(i=>i[1].includes(s.toLowerCase())).map(a => a[0]));
