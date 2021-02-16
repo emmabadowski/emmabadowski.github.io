@@ -35,6 +35,7 @@ $(document).ready(function(){
         });
         //after loading index, execute search based on query params
         //get params
+
         const params = new URLSearchParams(window.location.search);
         let uniqueFields = new Set();
         //get unique fields from params
@@ -44,7 +45,7 @@ $(document).ready(function(){
 
         //get list of valid fields from DOM
         let validFields = new Set();
-        for (const key of window.store){
+        for (const key of document.getElementById("search_field")){
             validFields.add(key.value);
         }
 
