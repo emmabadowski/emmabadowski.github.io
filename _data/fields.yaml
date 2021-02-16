@@ -29,7 +29,7 @@
   label: "# of Parts"
   type: num
   sort: int
-  abbr: "total number of parts not including chord notations"
+  abbr: "total number of parts not including chord notation"
 
 - value: voices
   label: Parts
