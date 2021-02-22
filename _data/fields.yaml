@@ -3,54 +3,64 @@
   label: Book Title
   type: text
   sort: string-ins
+  searchable: true
 
 - value: editor
   label: Editor
   type: text
   sort: string-ins
+  searchable: true
 
 - value: year
   label: Year
   type: num
   sort: int
+  searchable: true
 
 - value: song_no
   label: "Song #"
   type: num
   sort: float
   abbr: "position of song in original text"
+  searchable: false
 
 - value: song_title
   label: Song Title
   type: text
   sort: string-ins
+  searchable: true
 
 - value: no_parts
   label: "# of Parts"
   type: num
   sort: int
   abbr: "total number of parts not including chord notation"
+  searchable: true
 
 - value: voices
   label: Parts
   type: sym
   sort: string-ins
   abbr: "list of parts in song: Soprano, Alto, Tenor, Bass, Chords/Continuo"
+  searchable: true
 
 - value: text
   label: Text
   type: sym
   sort: string-ins
   abbr: "indicates which parts have text setting"
+  searchable: true
 
 - value: languages
   label: Languages
   type: text
   sort: string-ins
   abbr: "language or languages of the song's text"
+  searchable: true
 
 - value: tags
   label: Notes
   type: text
   sort: string-ins
+  searchable: true
 
