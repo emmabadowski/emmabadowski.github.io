@@ -127,9 +127,11 @@ function create_param_label(id, params, category, value){
     const label = get_field_by_value("label", v);
     const text = (item === Object(item)) ? Object.values(item)[0] : item; //gets value from object, keeps string the same
     id.append(`
-        <div class="ui large label">${label}:
-            <div class="detail">${text}</div>
-            <i class="delete icon" onclick="delete_param('${category}','${value}')"></i>
+        <div class="ui large label" id="label_${category}${value}">${label}:
+            <div class="detail">${text} 
+            <i class="small grey pencil alternate icon link" title="edit search parameter" onclick="edit_param('${category}','${value}')"></i>
+            </div>
+            <i class="delete icon" title="delete search parameter" onclick="delete_param('${category}','${value}')"></i>
         </div>
         `);
 }
@@ -150,6 +152,58 @@ function delete_param(category, value){
     newparams.splice(value,1); //remove param to be deleted
     params[category] = newparams;
     serialize_params(params); //serialize params with changes
+}
+//function for toggling on an edit form for existing param labels
+function edit_param(category, value){
+    const $paramlabel = $('#label_'+category+value+' .detail'); //targets appropriate label
+    let params = deserialize_params();
+    let editparams = params[category][value]; //parameter to be edited
+    //get raw text value
+    const text = typeof editparams === "object" ? editparams[Object.keys(editparams)[0]] : editparams;
+    $paramlabel.html(`
+    <form id="edit_form${category}${value}" method="get">
+    <div class="fields">
+    <div class="ui transparent input"><input 
+        type="text" 
+        id="edit_text${category}${value}"
+        oninput="this.size = this.value.length+1;"
+    ></div>
+    <button class="ui mini icon button" type="submit"><i class="ui icon check" title="confirm edit"></i></button>
+    <button class="ui mini icon button" type="reset"><i class="ui icon undo" title="cancel edit"></i></button>
+    </div>
+    </form>`);
+    //add the value to the input, select it, and set the size of the input box equal to the value size
+    $paramlabel.find('#edit_text'+category+value).val(text).select().attr("size",(text.length+1));
+    // Event when label is edited
+    $("#edit_form"+category+value).submit(function(event){
+        event.preventDefault();
+        const newText = $("#edit_text"+category+value).val();
+        //if item is object, update value of object. If text, update text
+        if (typeof editparams === "object"){
+            editparams[Object.keys(editparams)[0]] =  newText;
+        } else {
+            editparams = newText;
+        }
+        //push changes
+        params[category][value] = editparams;
+        serialize_params(params);
+    });
+    $("#edit_form"+category+value).on("reset", function(event){
+        event.preventDefault();
+        cancel_edit_param(category, value, text);
+    });
+    $("#edit_form"+category+value).on("keyup", function(e){
+       if (e.key === "Escape"){
+           cancel_edit_param(category, value, text);
+       }
+    });
+}
+function cancel_edit_param(category, value, text){
+    const $paramlabel = $('#label_'+category+value+' .detail');
+    $paramlabel.html(`
+    ${text}
+    <i class="small grey pencil alternate icon link" title="edit search parameter" onclick="edit_param('${category}','${value}')"></i>
+    `);
 }
 //gets query params and converts them into readable text
 function deserialize_params(){
@@ -232,9 +286,15 @@ function execute_query(data, params){
                 //split number field into array on "," (trim whitespace)
                 const nums = String(n[param][field]).split(",").map(a => a.replace(/\s/g,''));
                 for (const num in nums){
-                    const numrange = nums[num].split("-");
-                    //creates Set that contains all unique results from this search
-                    searchRes.filter(a => (a[field] >= numrange[0] && a[field] <= numrange[numrange.length - 1])).forEach(a => newSearchResSet.add(a));
+                    if (nums[num].includes(">")){
+                        searchRes.filter(a => a[field] >=   nums[num].replace(">",'')).forEach(a => newSearchResSet.add(a));
+                    } else if (nums[num].includes("<")){
+                        searchRes.filter(a => a[field] <=   nums[num].replace("<",'')).forEach(a => newSearchResSet.add(a));
+                    } else {
+                        //note this works fine for numbers without a hyphen in them too, so there's no seperate case for that
+                        const numrange = nums[num].split("-");
+                        searchRes.filter(a => (a[field] >= parseInt(numrange[0]) && (numrange[numrange.length -1].length ? a[field] <= parseInt(numrange[numrange.length - 1]) : true))).forEach(a => newSearchResSet.add(a));
+                    }
                 }
                 //passes new set of results back into searchRes variable.
                 searchRes = [...newSearchResSet];
