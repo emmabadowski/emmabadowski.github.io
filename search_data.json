@@ -2,10 +2,9 @@
 ---
 {% comment %}counts how many items there will be so it can create well-formed JSON {% endcomment %}
 {% assign songs = site.data.songs | where: "done","Y" | sort: "year" %}
-{
+[
 {% for song in songs %}
-{% assign id = song.book_title | append:'_' | append: song.song_no | downcase | replace: ' ','_' | escape %}
- "{{id}}" : {
+{
   "book_title" : "{{song.book_title}}",
   "editor" : "{{song.editor}}",
   "year" : "{{song.year}}",
@@ -22,4 +21,4 @@
 
  }{% unless forloop.last %},{% endunless %}
 {% endfor %}
-}
+]

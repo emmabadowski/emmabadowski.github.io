@@ -18,9 +18,16 @@ header {
     display: flex;
      justify-content: center;
      align-items: center;
+    flex-direction: column;
     height: 200px;
     min-height: 100px;
     text-align: center;
+}
+header h1.ui.header {
+    margin-bottom: 0px;
+}
+header .subtitle {
+    font-size: 16px;
 }
 footer {
     min-width: 100%;
@@ -42,6 +49,13 @@ footer p {
 .bottom-content {
     width: 100vw;
     padding: 20px 0;
+}
+.range-select {
+    margin-top: 6px;
+    position: relative;
+}
+.range-label {
+    padding: 5px;
 }
 
 @media only screen and (max-width: 767px){
